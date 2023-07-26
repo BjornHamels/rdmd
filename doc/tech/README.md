@@ -65,8 +65,6 @@ This is a part of the diagram showing the signal lines coming in via connector `
 1. GND
 1. Pin 14: GND
 
-
-
 ### Wirering and components
 
 There are three main actors. The display, the row driver and the column drivers.
@@ -144,7 +142,7 @@ Below is the function table of the row IC, on the falling edge of the `RCLK` the
 
 ![Function Table ..8fn](sn75558fnfunctable.png)
 
-N.B. I've noticed cases where the remaining "frame image" Rows are skipped if empty (that is no `SDATA` present on the Row, and thus skipped).
+N.B. I've noticed cases where the remaining "frame image" Rows are skipped if empty (that is no `SDATA` present on the Row, and thus skipped). See Pico thoughts below.
 
 ### Columns (..5fn)
 
@@ -164,7 +162,17 @@ Things to notice:
 * `DE` (Output Enable here) goes down for 17us in the last part of where serial data is still pushed. At the end of that width `COLLAT` (Latch Enable) goed up briefly. This presents the new data (128 bits worth) on the outputs to the Display after the Latch Enable.
 * `DOTCLK` provides the (fast - 1 MHz!) clock signal when needed. It tends to always count up to 128.
 
-### Eaxmples
+#### On the Oscilloscope
+
+![Four signals on the scope](ri5vertline1.png)
+
+Above, several `RDATA` image frames. Ch1: `RDATA`, Ch2: `RCLK`, Ch3: `DOTCLK`, Ch4: `SDATA`.
+
+![Four signals on the scope](ri5vertline2.png)
+
+Above, zoomed into one image frame with one vertical line (ch4).
+
+### Examples
 
 #### One vertical line
 
@@ -178,15 +186,24 @@ As there is no apparant way to orginize this yet, I'll summerize the findings be
 
 * My LA probed at 200MHz, some articats show like in the `DE` near a `RDATA` signal. Same for `SDATA`, seems too short (5ns). It also misses some `SDATA` signals which is not possible with a vertical line.
 * Notice the `DOTCLK` going bananas at Row32 (=row1). Same goes for `COLLAT`. My LA or a junk signal? How is it ignored by the DMD?
-* My LA numbers the rows with an idle period _before_ `DOTCLK` 128 clock pulses. The Row should likely be counted as the `DOTCLK` starts and then the idle period _behind_ it. That makes sence with the `DE` disbling the Display.
+* My LA numbers the rows with an idle period _before_ `DOTCLK` 128 clock pulses. The Row should likely be counted as the `DOTCLK` starts and then the idle period _behind_ it. That makes sence with the `DE` disabling the Display.
 
 #### One horizontal line
 
 ![DMD with one horizontal line](hs2testdmdhorline.png)
 
-### Pico thoughts
+## Pico
 
-Thoughts for the Pico and the 4 channel isolator (5volt form the pinball to the 3.3 Pico):
+
+### Isolation
+
+The Pico works with 3.3v inputs. It has an 5v out line, but connecting any 5v to a gpio or other pin will potentially destroy the Pico.
+
+I have a few 4 channel isolator/ optocouplers. 
+
+
+
+### Thoughts
 
 * Use `RDATA` to identify an image frame.
 * Use `RCLK` to identify Rows. Not `COLLAT` as it goes bananas.
