@@ -30,9 +30,7 @@ I own a few pinball machines. The one I used for the screenshots, manuals and ex
 
 ## Display Test
 
-In the System Menu of the pinball machine there is a Test menu. Option 11 in the Test menu is the T.11 Display Test. It cycles different patterns and tests the DMD. Most of my screenshots are made with one vertical line being displayed, like below.
-
-
+In the System Menu of the pinball machine there is a Test menu. Option 11 in the Test menu is the T.11 Display Test. It cycles different patterns and tests the DMD. Most of my LA/ scope screenshots are made with one vertical line being displayed.
 
 ## Diagrams
 
