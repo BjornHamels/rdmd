@@ -199,9 +199,15 @@ As there is no apparant way to orginize this yet, I'll summerize the findings be
 
 The Pico works with 3.3v inputs. It has an 5v out line, but connecting any 5v to a gpio or other pin will potentially destroy the Pico.
 
-I have a few 4 channel isolator/ optocouplers. 
+![sn74ahct125n](sn74ahct125n.png)
 
+I have a few [sn74ahct125n](https://www.alldatasheet.com/datasheet-pdf/pdf/218060/TI/SN74AHCT125N.html) (4 channel isolator/ optocouplers) laying around. They are normally used for shifting 3.3 output voltage to 5. They can only be used one way. According to [adafruit](https://www.adafruit.com/product/1787) they work for 5 to 3.3 as well.
 
+> You can also use it to connect 5V logic out to 3V logic in, that's when you want to power the 74AHCT125 with 3V, it can safely read 5V logic on the input pins.
+
+Which I tested with the `DOTCLK` 1MHz signal to be sure. It worked ok bringing 5.62 input voltage down to 3.81.
+
+![Testing 5 to 3.3](ri5isocoupler.png)
 
 ### Thoughts
 
