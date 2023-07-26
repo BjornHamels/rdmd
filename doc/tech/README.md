@@ -30,9 +30,9 @@ I own a few pinball machines. The one I used for the screenshots, manuals and ex
 
 ## Display Test
 
-In the System Menu of the pinball machine there is a Test menu. Option 11 in the Test menu is the T.11 Display Test. It cycles different patterns and tests the DMD. Most of my screenshots are made with one horizontal line being displayed, like below.
+In the System Menu of the pinball machine there is a Test menu. Option 11 in the Test menu is the T.11 Display Test. It cycles different patterns and tests the DMD. Most of my screenshots are made with one vertical line being displayed, like below.
 
-![DMD with one horizontal line](hs2testdmdhorline.png)
+
 
 ## Diagrams
 
@@ -166,15 +166,32 @@ Things to notice:
 * `DE` (Output Enable here) goes down for 17us in the last part of where serial data is still pushed. At the end of that width `COLLAT` (Latch Enable) goed up briefly. This presents the new data (128 bits worth) on the outputs to the Display after the Latch Enable.
 * `DOTCLK` provides the (fast - 1 MHz!) clock signal when needed. It tends to always count up to 128.
 
+### Eaxmples
 
-### Eaxmple: one horizontal line
+#### One vertical line
 
-Lets start with the horizontal line and some general insights.
+![DMD with one vertical line](hs2testdmdvertline.jpg)
+
+Lets start with the vertical line and some general insights.
 
 ![Big picture containing a lot of la screenshots](lahorline.png)
 
 As there is no apparant way to orginize this yet, I'll summerize the findings below in no particular order.
 
-* My LA probed at 200MHz, some articats show like in the `DE` near a `RDATA` signal. Same for `SDATA`, seems too short (5ns). It also misses some `SDATA` signals which is not possible with a horizontal line.
+* My LA probed at 200MHz, some articats show like in the `DE` near a `RDATA` signal. Same for `SDATA`, seems too short (5ns). It also misses some `SDATA` signals which is not possible with a vertical line.
 * Notice the `DOTCLK` going bananas at Row32 (=row1). Same goes for `COLLAT`. My LA or a junk signal? How is it ignored by the DMD?
 * My LA numbers the rows with an idle period _before_ `DOTCLK` 128 clock pulses. The Row should likely be counted as the `DOTCLK` starts and then the idle period _behind_ it. That makes sence with the `DE` disbling the Display.
+
+#### One horizontal line
+
+![DMD with one horizontal line](hs2testdmdhorline.png)
+
+### Pico thoughts
+
+Thoughts for the Pico and the 4 channel isolator (5volt form the pinball to the 3.3 Pico):
+
+* Use `RDATA` to identify an image frame.
+* Use `RCLK` to identify Rows. Not `COLLAT` as it goes bananas.
+* Use `DOTCLK` as a clock signal, albeit it going bananas as well in row 32 (or LA error?).
+* Use `SDATA` to get the column pixels.
+* It was observed that Rows that are empty at the end of an image frame get ignored. That is, `RDATA` pulses and/or `RCLK` advances without `DOTCLK`/`SDATA` present. Needs more investigation.
