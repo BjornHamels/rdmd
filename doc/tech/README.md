@@ -162,6 +162,10 @@ Things to notice:
 * `DE` (Output Enable here) goes down for 17us in the last part of where serial data is still pushed. At the end of that width `COLLAT` (Latch Enable) goed up briefly. This presents the new data (128 bits worth) on the outputs to the Display after the Latch Enable.
 * `DOTCLK` provides the (fast - 1 MHz!) clock signal when needed. It tends to always count up to 128.
 
+### Image frame
+
+Using `RDATA` to mark the start of a frame, it takes a period of 8.1885 ms per image frame. This frame has 32 rows times 128 pixels = 4096 bits (512 bytes). One second of recording takes a bit over 122 image frames, i.e. a 122 Hz Display refresh frequency. This comes to 62.5 kbytes/s worth of uncompressed image frame data.
+
 #### On the Oscilloscope
 
 ![Four signals on the scope](ri5vertline1.png)
@@ -216,3 +220,7 @@ Which I tested with the `DOTCLK` 1MHz signal to be sure. It worked ok bringing 5
 * Use `DOTCLK` as a clock signal, albeit it going bananas as well in row 32 (or LA error?).
 * Use `SDATA` to get the column pixels.
 * It was observed that Rows that are empty at the end of an image frame get ignored. That is, `RDATA` pulses and/or `RCLK` advances without `DOTCLK`/`SDATA` present. Needs more investigation.
+* A PIO[01] can have 2 interrupts. I could use those as two 4096 bit (512 bytes) image frame dma complete triggers?
+  * Though might be better to trigger every x frames, that way the Pico can optimize (frame duplication likely at 122 Hz?) and compress the data for sending over the Wifi.
+  * Above: perhaps have 2 modes. One for transfer via wifi (optimized) and one a.s.a.p. mode to drive a local LCD display for replacement of the (broken) DMD?
+  * Would it be possible to Huffman complete image frames? I bet the amount of animations are often repeated.
