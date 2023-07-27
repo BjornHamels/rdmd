@@ -27,8 +27,19 @@ pico_sdk_init()
 
 add_executable(picodmd picodmd.c )
 
-pico_set_program_name(picodmd "picodmd")
-pico_set_program_version(picodmd "0.1")
+
+# Get the UTC build timestamp and current date
+string(TIMESTAMP TSBUILD "%Y%m%d%H")
+string(TIMESTAMP TODAY "%Y-%m-%d %H:%S")
+
+# Add picotool compatible information in the binary.
+pico_set_program_name(picodmd "rdmd")
+pico_set_program_version(picodmd "v"+${TSBUILD})
+pico_set_program_description(picodmd "A Pinball Remote DMD Project")
+pico_set_program_url(picodmd "https://github.com/BjornHamels/rdmd")
+
+
+
 
 pico_enable_stdio_uart(picodmd 0)
 pico_enable_stdio_usb(picodmd 1)
