@@ -85,7 +85,7 @@ void init_7segd() {
     write_register_all(CMD_SCANLIMIT, 7);
     write_register_all(CMD_DECODEMODE, 255);
     write_register_all(CMD_SHUTDOWN, 1);
-    write_register_all(CMD_BRIGHTNESS, 8);
+    write_register_all(CMD_BRIGHTNESS, 3);
 
     clear_7segd();
 }
