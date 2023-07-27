@@ -24,21 +24,14 @@ include(pico_sdk_import.cmake)
 project(picodmd C CXX ASM)
 pico_sdk_init()
 
-
 # This file: make sure it builds the uf2.
-add_executable(picodmd picodmd.c)
+add_executable(picodmd picodmd.c max7219.c)
 
 
-# Get the UTC build timestamp and current date
-string(TIMESTAMP VERTSBUILD "v%Y%m%d%H")
+# Get the UTC build timestamp and current date when this project is configured.
+string(TIMESTAMP VBUILDTS "%Y%m%d%H")
 string(TIMESTAMP TODAY "%Y-%m-%d %H:%S")
-
-
-# Add picotool compatible information in the binary.
-pico_set_program_name(picodmd "rdmd")
-pico_set_program_version(picodmd ${VERTSBUILD})
-pico_set_program_description(picodmd "A Pinball Remote DMD Project")
-pico_set_program_url(picodmd "https://github.com/BjornHamels/rdmd")
+add_definitions(-DVBUILDTS="${VBUILDTS}")
 
 
 # Outputs the printf to the usb com port.
@@ -47,7 +40,7 @@ pico_enable_stdio_uart(picodmd 0)
 
 
 # Linker targets to add.
-target_link_libraries(picodmd pico_stdlib)
+target_link_libraries(picodmd pico_stdlib hardware_spi)
 
 
 # Add the standard include files to the build.
