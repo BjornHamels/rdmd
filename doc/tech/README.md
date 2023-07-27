@@ -10,17 +10,17 @@ Stuff I own.
 
 ![Tektronix 7603](oldtektronix.png)
 
-Started out with my trusted 100Mhz non-storage crt large screen [Tektronix 7603](https://w140.com/tekwiki/wiki/7603) with my horizontal plugin [7B53A](https://w140.com/tekwiki/wiki/7B53A) with two vertical plugins: [7A16A](https://w140.com/tekwiki/wiki/7A16A) and [7A15A](https://w140.com/tekwiki/wiki/7A15A).
+Started out with my trusted 100MHz non-storage crt large screen [Tektronix 7603](https://w140.com/tekwiki/wiki/7603) with my horizontal plugin [7B53A](https://w140.com/tekwiki/wiki/7B53A) with two vertical plugins: [7A16A](https://w140.com/tekwiki/wiki/7A16A) and [7A15A](https://w140.com/tekwiki/wiki/7A15A).
 
 ![Rigol MSO5104](newrigol.png)
 
-That got replaced by an 100Mhz 8GSa/s 4Ch [Rigol MSO5104](https://www.rigol.eu/products/oscillosopes/MSO5000%20series.html) with nearly all options (except the Mhz increase) which I got via a very good deal at eleshop.nl.
+That got replaced by an 100MHz 8GSa/s 4Ch [Rigol MSO5104](https://www.rigol.eu/products/oscillosopes/MSO5000%20series.html) with nearly all options (except the MHz increase) which I got via a very good deal at eleshop.nl.
 
 ### Logic Analyser
 
 ![DSLogic Plus](dslogic.png)
 
-My logic analyser is a DreamSourceLab [DSLogic Plus](https://www.dreamsourcelab.com/product/), 16 channels up to 400 Mhz.
+My logic analyser is a DreamSourceLab [DSLogic Plus](https://www.dreamsourcelab.com/product/), 16 channels up to 400 MHz.
 
 ### Pinball machine with a DMD
 
@@ -182,9 +182,9 @@ Above, zoomed into one image frame with one vertical line (ch4).
 
 ![DMD with one vertical line](hs2testdmdvertline.jpg)
 
-Lets start with the vertical line and some general insights.
+Lets start with the vertical line and some general insights. Below is a picture of me slowly "zooming in" into the 1 MHz speed of the `DOTCLK` and accompanying `SDATA` data.
 
-![Big picture containing a lot of la screenshots](lahorline.png)
+![Big picture containing a lot of LA screenshots](lavertline.png)
 
 As there is no apparant way to orginize this yet, I'll summerize the findings below in no particular order.
 
