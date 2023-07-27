@@ -7,8 +7,9 @@ int main()
 {
     stdio_init_all();
 
+    while(true) {
+      printf("Hello, world!\n");
+      sleep_ms(250);
+    }
 
-    puts("Hello, world!");
-
-    return 0;
 }
