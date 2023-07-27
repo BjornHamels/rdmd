@@ -186,11 +186,11 @@ Lets start with the vertical line and some general insights. Below is a picture 
 
 ![Big picture containing a lot of LA screenshots](lavertline.png)
 
-As there is no apparant way to orginize this yet, I'll summerize the findings below in no particular order.
+Things to notice in the huge image above:
 
 * My LA probed at 200MHz, some articats show like in the `DE` near a `RDATA` signal. Same for `SDATA`, seems too short (5ns). It also misses some `SDATA` signals which is not possible with a vertical line.
 * Notice the `DOTCLK` going bananas at Row32 (=row1). Same goes for `COLLAT`. My LA or a junk signal? How is it ignored by the DMD?
-* My LA numbers the rows with an idle period _before_ `DOTCLK` 128 clock pulses. The Row should likely be counted as the `DOTCLK` starts and then the idle period _behind_ it. That makes sence with the `DE` disabling the Display.
+* My LA numbers the rows with an idle period _before_ `DOTCLK` 128 clock pulses. The Row should likely be counted as the `DOTCLK` starts and then the idle period _behind_ it. That makes sence with the `DE` disabling the Display while it is being Latched.
 
 #### One horizontal line
 
