@@ -198,7 +198,6 @@ Things to notice in the huge image above:
 
 ## Pico
 
-
 ### Isolation
 
 The Pico works with 3.3v inputs. It has an 5v out line, but connecting any 5v to a gpio or other pin will potentially destroy the Pico.
@@ -224,3 +223,22 @@ Which I tested with the `DOTCLK` 1MHz signal to be sure. It worked ok bringing 5
   * Though might be better to trigger every x frames, that way the Pico can optimize (frame duplication likely at 122 Hz?) and compress the data for sending over the Wifi.
   * Above: perhaps have 2 modes. One for transfer via wifi (optimized) and one a.s.a.p. mode to drive a local LCD display for replacement of the (broken) DMD?
   * Would it be possible to Huffman complete image frames? I bet the amount of animations are often repeated.
+
+### First program
+
+Using `RDATA` as a trigger on the faling edge the scope captured the output of the below program.
+
+```pio
+opnieuw:
+.wrap_target
+nop                 side 0b10
+nop                 side 0b00
+jmp pin opnieuw     side 0b00
+nop                 side 0b11 [7]
+```
+
+The program does not make much sence. The `jmp pin` is tied to the Ch3 signal (`RDATA`). I realzed I should `wait 1 RDATA` then `wait 0 RDATA` to lock into the faling edge of the `RDATA` signal.
+
+![Overview of the first pio program on the scope](ri5firstpio1.png)
+![Left of the trigger](ri5firstpio2.png)
+![Right of the trigger](ri5firstpio3.png)
