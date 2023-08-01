@@ -242,3 +242,60 @@ The program does not make much sence. The `jmp pin` is tied to the Ch3 signal (`
 ![Overview of the first pio program on the scope](ri5firstpio1.png)
 ![Left of the trigger](ri5firstpio2.png)
 ![Right of the trigger](ri5firstpio3.png)
+
+### A test program
+
+Given that the pinball machine is downstairs and the computer is upstrairs, after a few times going up and down I've wrote a small test program. It is not accurate to a real signal, but works good enough to check pin configuration and triggering of the main pio program.
+
+```pio
+.wrap_target
+
+set pins 0b0110 [31]
+nop [29]
+set pins 0b0010
+
+set y, 31
+line:
+
+set pins 0b0000 [2]
+set pins 0b0100 [31]
+
+set x, 15
+front_porch:
+
+nop [31]
+jmp x-- front_porch
+
+set x, 15
+vier:
+
+set pins 0b1101
+set pins 0b0101
+set pins 0b1101
+set pins 0b0100
+
+set pins 0b1101
+set pins 0b0101
+set pins 0b1101
+set pins 0b0101
+
+set pins 0b1100
+set pins 0b0100
+set pins 0b1100
+set pins 0b0100
+
+set pins 0b1101
+set pins 0b0101
+set pins 0b1101
+set pins 0b0100
+
+jmp x-- vier
+jmp y-- line
+
+.wrap
+```
+
+Clock divider was set to 12.5.
+
+![test 1 screen showing 128 pixels being sent](ri5test1.png)
+![test 2 screen showing 32 lines in 1 frame](ri5test2.png)
