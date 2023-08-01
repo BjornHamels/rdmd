@@ -299,3 +299,97 @@ Clock divider was set to 12.5.
 
 ![test 1 screen showing 128 pixels being sent](ri5test1.png)
 ![test 2 screen showing 32 lines in 1 frame](ri5test2.png)
+
+
+### A reading test program
+
+Looks like it works a bit?
+```terminal
+        _____  __  __ _____  
+       |  __ \|  \/  |  __ \ 
+   _ __| |  | | \  / | |  | |
+  | '__| |  | | |\/| | |  | |
+  | |  | |__| | |  | | |__| |
+  |_|  |_____/|_|  |_|_____/ 
+
+rDMD Version 2023080118. See https://github.com/BjornHamels/rdmd
+
+test-offset: 4
+offset: 21
+Waiting ...
+☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼
+☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼
+☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼
+☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼
+☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼☼·☼·☼☼☼☼
+---- Closed the serial port COM5 ----
+```
+
+As seen on the scope.
+
+![Zoomed reading](ri5read1.png)
+![One image frame worth of data](ri5read2.png)
+
+Via the below (inefficient) program with debug pins and random comments.
+
+```pio
+.program readdmd
+
+; Debug, ~indicate reading.
+.side_set 1 opt
+
+; The signal lines. SDATA is 0 as it needs to be the base pin for IN.
+.define RDATA  1
+.define RCLK   2
+.define DOTCLK 3
+.define SDATA  0
+
+
+; Start of the loop.
+.wrap_target
+
+
+; ! Detect start of image frame.
+; SN75558FN: serial data is entered into the shift register on the high-to-low transition of the clock input.
+; So, wait for the RDATA to go high while the RCLK goes low. This identifies the start of an image frame.
+wait 1 pin RDATA side 1     ; Side: indicate not reading any data in.
+wait 0 pin RDATA
+
+
+; TODO: use irq for 1 image frame? - consider about ors = 128 store?
+;                                  - consider using free reg for line count?
+;                                  - consider no way to find corrupted lines, thus always push 0filled?
+; Clear possible remaining row pixel data from the isr. TODO: reconsider above.
+mov isr, null
+
+
+; ! Detect one pixel row.
+wait 0 pin RCLK
+
+
+; Set up the 128 loop counter. One loop(y) of 4 times one loop(x) of 32 equals 128 pixels we need per row.
+; The pio cannot set higher than 31, idea: load this register once to 128 with ISR?
+set y, 3            
+
+; ! Detect pixels.
+; SN75555FN: serial data is entered into the shift register on the low-to-high transition of CLOCK.
+ypixels:
+set x, 31 side 1    ; Side: (re-)indicate not reading any data in.
+
+
+xpixels:
+wait 0 pin DOTCLK
+wait 1 pin DOTCLK
+
+
+IN pins, 1  ; Uses SDATA, side: indicate reading-data.
+
+; Loop 128 times.
+jmp x-- xpixels
+jmp y-- ypixels
+
+
+.wrap
+```
+
+To be continued. Perhaps test on the pinball machine?
