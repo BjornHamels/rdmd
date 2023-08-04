@@ -22,6 +22,8 @@ That got replaced by an 100MHz 8GSa/s 4Ch [Rigol MSO5104](https://www.rigol.eu/p
 
 My logic analyser is a DreamSourceLab [DSLogic Plus](https://www.dreamsourcelab.com/product/), 16 channels up to 400 MHz.
 
+Edit: replaced with a Rigol PLA2216 logic probe on 2023-8-3.
+
 ### Pinball machine with a DMD
 
 ![Highspeed DMD displaying the version of the ROM](hs2ver.png)
@@ -300,10 +302,10 @@ Clock divider was set to 12.5.
 ![test 1 screen showing 128 pixels being sent](ri5test1.png)
 ![test 2 screen showing 32 lines in 1 frame](ri5test2.png)
 
-
 ### A reading test program
 
 Looks like it works a bit?
+
 ```terminal
         _____  __  __ _____  
        |  __ \|  \/  |  __ \ 
@@ -393,3 +395,94 @@ jmp y-- ypixels
 ```
 
 To be continued. Perhaps test on the pinball machine?
+
+## Some more Logic Analysing later
+
+I love this Rigol MSO5104. This is where the MSO (mixed signal oscilloscope) in the name comes in handy.
+
+### Why
+
+Since I'm kind of stuck with the pio pico programming (nee, understanding how dma and the tasks work), I'm going to pursuit making a better image frame generator. That is a small Pi Pico that can generate dmd screens. It needs dma etc as well, but that way I can experiment with that and learn how to read via that Pi Pico connected.
+
+For that, lets get a better logic analyser.
+
+### Findings
+
+I wanted to see if the weird signals I saw with my DSLogic Plus were really there, so I bought a Rigol PLA2216 logic probe. This connects to my Rigol MSO5104.
+
+> **N.b.** D2 and D3 were mistakenly not labeled. D2 is `RCLK` and D3 is `COLLAT`.
+
+#### The general and the weird
+
+Here below you see column 128 being on. It's one of the test modes that can only light a single column and row. You can see a pretty clean signal. This will change if more data is displayed.
+
+![Column 128](ri5col128.png)
+
+##### Pattern every 8 SDATA bits
+
+This is one of the more weird things. Also the reason I connected Ch1 to `SDATA`, to see if perhaps the line was floating. But something upstream interfears with the `SDATA` signal at regular intervals of every 8 bits.
+
+![Pattern screenshot 1](ri5weird0.png)
+
+But as the sn75555fn (see above) loads data into the shift register on a low to high clock signal, this weirdness is ignored.
+
+![Pattern screenshot 2](ri5weird1.png)
+
+Besides the pattern, another thing I noticed is junk data. Seen in screenshot above, any `SDATA` when there is no `DOTCLK` is ignored (see datasheet sn75555fn). So the thing happening on the `SDATA` line after the Trigger (the orange T) with no `DOTCLK`present - is ignored. Why is it there? I don't know.
+
+![Pattern screenshot 3](ri5weird2.png)
+
+You'll see more of this pattern below in the Row or Column headings. Perhaps something upstream is parallel to serial shift rigister latching in new data?
+
+![Animated pattern](ri51row1columnanimated.png)
+
+Above you see the pattern in the animaged png for an image frame containing only 1 column of data vs 1 row of data. I.e. only the first pixel on on this row vs all pixels on on this row.
+
+It happens between the reading (rising edge of `RCLK`) of the `SDATA`, so it is never "noticed".
+
+#### Rows
+
+A row has 128 pixels, 32 rows make up one image frame. The DMD driver board shifts in a `1` at the beginning of each image frame on `RDATA`. So it is a good way to identify the start of an image frame.
+
+![Slightly over one image frame worth of data](ri5rdataperiod.png)
+
+Above you see that the DMD receives a bit over 122 images frames per second. So that is around 8.2 ms per frame. Row 1 was enabled.
+
+![Animated row 1 tru x](ri5rowanimated.png)
+
+Above you see the animated png pauze on row 1 and then lighting up the next row in steps. Thus row 1 "starts at" the `RDATA` high signal. Previously I mentioned the rows might be reversed, thus the image being sent "up side down". But that might not be the case, as shown above.
+
+Lets zoom in a bit on the falling edge of the `RDATA`, what I tend to call the back porch.
+
+![Zoomed in on rdata falling](ri5zoomedrdbp.png)
+
+Things to notice above:
+
+* Before the trigger (orange T) valid data is loaded into the column shift register. After there is no `DOTCLK`, so that is ignored.
+* The `RCLK` (D2) is triggered on the faling edge, so it enables the first row to be displayed.
+* The `COLLAT` (D3) latch is triggered to transfer the shift registers to the output. So given the point above, the received data is displayed from that point on when `DE` goes high (~400 ns later).
+
+![Zoomed in on rdata falling](ri5zoomrdatah2l.png)
+
+Timings are a bit better visable above.
+
+#### Columns
+
+This is me cycling through the first few columns via the test menu manually. The animation pauses on column 1.
+
+![columns 1 tru x animated](ri5colanimated.png)
+
+Things to notice above:
+
+* On the column 1 you see a lot of junk `SDATA` that is ignored as there is no `DOTCLK` present.
+* You see 2.5 `DOTCLK` cycles per devision (2 us). The frequency of the `dotclk` is 1 MHz.
+* The 8-bit weird pattern is visable near the end of the animation. It does not change the output of the data, as always it happens between the 2 rising edges of `DOTCLK`.
+* We're not on row 1, as we don't see any control signals indicating that (D0-D3).
+
+#### Download and see for yourself
+
+I've zipped three waveforms and my settings so you can [download them](3waves1setting.zip). It contains csv files of:
+
+* only row 1 being lit;
+* only column 128 being lit;
+* a complete image frame with some signal  before and after.
