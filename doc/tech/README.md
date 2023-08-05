@@ -479,7 +479,7 @@ Things to notice above:
 * The 8-bit weird pattern is visable near the end of the animation. It does not change the output of the data, as always it happens between the 2 rising edges of `DOTCLK`.
 * We're not on row 1, as we don't see any control signals indicating that (D0-D3).
 
-#### Download and see for yourself
+### Download and see for yourself
 
 I've zipped three waveforms and my settings so you can [download them](3waves1setting.zip). It contains csv files of:
 
@@ -487,11 +487,11 @@ I've zipped three waveforms and my settings so you can [download them](3waves1se
 * only column 128 being lit;
 * a complete image frame with some signal  before and after.
 
-#### Wave diagrams
+### Wave diagrams
 
 Via [wavedorm](https://wavedrom.com) I made some diagrams of how I understand the data to be sent to the DMD at this time.
 
-##### High level overview
+#### High level overview
 
 ```wavedorm
 {"signal":[["Column",{"name":"SDATA","wave":"x3.x.3.x.3.x.3","data":["pixel data","p d row 1","p d row 2"]},{"name":"DOTCLK","wave":"l6.l.6.l.6.l.6","data":["1Mhz clk","128 cycl","T: rising e"]},{"name":"COLLAT","wave":"0..0...0...0..","node":"W..X...Y...Z.."}],{},["Row",{"name":"RCLK","wave":"1..1...1...1..","node":"A..B...C...D.."},{"name":"RDATA","wave":"0..1...0......","node":"...I...J......"}],{},["DMD",{"name":"DE","wave":"h......lh......lh......lh.....","period":"0.5","phase":"1"},{"name":"(image seen)","wave":"8......8......","data":["frame x","frame x+1"]},{"name":"(row seen)","wave":"9..9...9...9..","data":["31","32","1","2"]}]],"edge":["Z-|->Y Trigger: rising edge","C-|->D Trigger: falling edge","I+J 256 us"],"head":{"text":"High level example of the signals to the DMD"}}
