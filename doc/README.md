@@ -1,3 +1,6 @@
 # Documentation
 
-At this moment, just only the [technical](tech) blog-style adventures.
+At the moment:
+
+* [technical](tech) blog-style adventures;
+* [signal description](dmd).

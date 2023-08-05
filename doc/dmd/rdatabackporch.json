@@ -1,0 +1,94 @@
+{
+  "signal":[
+    [
+      "Column",
+      {
+        "name":"SDATA",
+        "wave":"hh.l.hlh..l..x..........",
+        "data":[
+          
+        ],
+        "period":"0.5"
+      },
+      {
+        "name":"DOTCLK",
+        "wave":"P...l.",
+        "data":[
+          
+        ],
+        "period":"2"
+      },
+      {
+        "name":"COLLAT",
+        "wave":"l............Pl........",
+        "period":"0.5"
+      }
+    ],
+    {
+      
+    },
+    [
+      "Row",
+      {
+        "name":"RCLK",
+        "wave":"h............Nh........",
+        "period":"0.5"
+      },
+      {
+        "name":"RDATA",
+        "wave":"h......l...."
+      }
+    ],
+    {
+      
+    },
+    [
+      "DMD",
+      {
+        "name":"DE",
+        "wave":"l.......h..."
+      },
+      {
+        "name":"(belongs to)",
+        "wave":"=............=..........",
+        "data":[
+          "image frame x",
+          "image frame x+1"
+        ],
+        "period":"0.5"
+      },
+      {
+        "name":"(latched)",
+        "wave":"=............=..........",
+        "data":[
+          "row 32",
+          "row 1"
+        ],
+        "period":"0.5"
+      },
+      {
+        "name":"(in shift reg)",
+        "wave":"=............=..........",
+        "data":[
+          "row 1",
+          "(empty, no DOTCLK)"
+        ],
+        "period":"0.5"
+      },
+      {
+        "name":"(visable)",
+        "wave":"l...............8.......",
+        "data":[
+          "frame x+1, row 1"
+        ],
+        "period":"0.5"
+      }
+    ]
+  ],
+  "edge":[
+    
+  ],
+  "head":{
+    "text":"RDATA Back Porch"
+  }
+}
