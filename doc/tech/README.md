@@ -501,3 +501,11 @@ Via [wavedorm](https://wavedrom.com) I made some diagrams of how I understand th
 
 * `DE` is in reality much much shorter (around 20 us).
 * The pulses on `COLLAT` and `RCLK` are around the same time and inverted to eachother. They are quite short (bit over 200 ns).
+
+#### Timing from the DSLogic LA
+
+* The `DE` has a duty cycle of 93.57%. It is low for 16.46 us.
+* The period of `RDATA` (signifying an image frame) is 8.188 ms, thus around 122.1 Hz. The signal is low for about 7.933 ms. It is high for around 255.885 us.
+* `RCLK` (and thus related to `COLLAT` which is `RCLK`'s inverted signal) has a duty cycle of 99.91%. A Period of 255.89 us, being low for 235 ns; `COLLAT` is 240 ns. This is around half the `DOTCLK` who has a width of around 500 ns. This comes to about 3.91 kHz
+* `DOTCLK` has a frequency of 1 MHz. This comes to 500 ns high and 500 ns low. When pushing data the duty cycle is thus 50%. Once all 128 rising edges are "done" for the `SDATA`, the `DOTCLK` signal goes its own way (sometimes random), though never floating or high impenance.
+* `SDATA` needs to be examened via the scope. The DSLogic LA is not accurate enough.
