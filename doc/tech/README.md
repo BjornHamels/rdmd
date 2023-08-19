@@ -501,37 +501,3 @@ Via [wavedorm](https://wavedrom.com) I made some diagrams of how I understand th
 
 * `DE` is in reality much much shorter (around 20 us).
 * The pulses on `COLLAT` and `RCLK` are around the same time and inverted to eachother. They are quite short (bit over 200 ns).
-
-### Statistics and timings from the scope
-
-Spend some time connecting the scope to the pinball machine.
-
-![An and Di signals](ri5signal.png)
-
-#### Analog statistics
-
-Only the bottom (seen from the LA) signals are connected to the analog inputs these statistics describe.
-
-![Statistics ch1](ri5an1timing.png)
-![Statistics ch2](ri5an2timing.png)
-![Statistics ch3](ri5an3timing.png)
-![Statistics ch4](ri5an4timing.png)
-
-#### Digital statistics
-
-All 6 signal lines (D0 to D5, labeled accordingly) statistics are below.
-
-![Statistics d0](ri5di0row1.png)
-![Statistics d1](ri5di1row1.png)
-![Statistics d2](ri5di2row1.png)
-![Statistics d3](ri5di3row1.png)
-![Statistics d4](ri5di4row1.png)
-![Statistics d5](ri5di5row1.png)
-
-#### Things to notice regarding row 1 and 32
-
-The above screenshots show row 1 being illuminated. It is anchored by `RDATA`'s pulse.
-
-![Row 32](ri5row32vt.png)
-
-The above screenshot should show row 32 being illuminated. This merrits more investigation as there is a "extra" row unused before the `RDATA`'s pulse.
